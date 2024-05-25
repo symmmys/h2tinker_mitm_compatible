@@ -37,9 +37,11 @@ class RaceReplay:
                 flow_index = flow_index + 1
                 if isinstance(this_flow, http.HTTPFlow):
                     # Create request frames for POST /race
-                    req = conn.create_request_frames(this_flow.request.method, this_flow.request.path , i, this_flow.request.headers,this_flow.request.content)
+                    req = conn.create_request_frames(this_flow.request.method, this_flow.request.path , i, headers=this_flow.request.headers,body=this_flow.request.content)
+
                     # Remove END_STREAM flag from HEADERS frame which is always first
-                    req.frames[0].flags.remove('ES')
+                    if 'ES' in req.frames[0].flags:
+                        req.frames[0].flags.remove('ES')
                     # Send the request frames
                     conn.send_frames(req)
                     # Create the final DATA frame using scapy and store it

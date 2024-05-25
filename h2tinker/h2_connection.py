@@ -190,6 +190,8 @@ class H2Connection(ABC):
     def _send_frames(self, *frames: h2.H2Frame):
         b = bytes()
         for f in frames:
+            self.logger.info(f"[h2tinker/h2_connection._send_frames] sending frame:")
+            f.show()
             b += bytes(f)
         self._send(b)
 

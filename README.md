@@ -24,3 +24,5 @@ Then in mitmproxy, select whichever flows you want to use to attempt to construc
 ```
 :race_replay @marked
 ```
+
+Then, the http frame data is printed out in the event log. Would like to construct the output in the mitmproxy UI, but that's gonna be more difficult and take a lot more time.
