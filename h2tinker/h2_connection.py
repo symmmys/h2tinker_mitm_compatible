@@ -11,6 +11,21 @@ from h2tinker import log
 from h2tinker.assrt import assert_error
 from h2tinker.frames import is_frame_type, has_ack_set, create_settings_frame
 
+import logging
+import contextlib
+
+class OutputLogger:
+    def __init__(self, logger, level="INFO"):
+        self.logger = logger
+        self.name = self.logger.name
+        self.level = getattr(logging, level)
+
+    def write(self, msg):
+        if msg and not msg.isspace():
+            self.logger.log(self.level, msg)
+
+    def flush(self): pass
+
 
 class H2Connection(ABC):
     """
@@ -25,7 +40,8 @@ class H2Connection(ABC):
         self.sock = None
         self.is_setup_completed = False
         self.logger = logger
-        sys.stdout = self.logger
+        self.output_logger = OutputLogger(logger)
+        sys.stdout = self.output_logger
 
     def _check_setup_completed(self):
         assert_error(self.is_setup_completed, 'Connection setup has not been completed, call setup(...) '
@@ -52,11 +68,11 @@ class H2Connection(ABC):
                    ':path {}\n'
                    ':scheme http\n'
                    ':authority {}:{}\n').format(method, path, self.host, self.port)
-        self.logger.info("req_str before headers:",req_str)
+        self.logger.info(f"[h2tinker.create_request_frames] req_str before headers: {req_str}")
 
         if headers is not None:
             req_str += '\n'.join(map(lambda e: '{}: {}'.format(e[0], e[1]), headers))
-        self.logger.info("[h2tinker.create_request_frames] req_str after headers:",req_str)
+        self.logger.info(f"[h2tinker.create_request_frames] req_str after headers: {req_str}")
 
         # noinspection PyTypeChecker
         return header_table.parse_txt_hdrs(
@@ -107,8 +123,11 @@ class H2Connection(ABC):
         :param print_frames: whether to print received frames
         """
         self._check_setup_completed()
-        self.logger.info("Infinite read loop starting...")
+        self.logger.info("[h2tinker/h2_connection.infinite_read_loop] 10 second timed receive loop starting...")
+        timeout = time.time() + 10
         while True:
+            if time.time() > timeout:
+                break
             frames = self._recv_frames()
             if print_frames:
                 for f in frames:
