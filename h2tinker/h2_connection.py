@@ -71,8 +71,11 @@ class H2Connection(ABC):
         self.logger.info(f"[h2tinker.create_request_frames] req_str before headers: {req_str}")
 
         if headers is not None:
-            req_str += '\n'.join(map(lambda e: '{}: {}'.format(e[0], e[1]), headers))
-        self.logger.info(f"[h2tinker.create_request_frames] req_str after headers: {req_str}")
+            for header in headers:
+                all_vals = headers.get_all(header)
+                for val in all_vals:
+                    req_str += f'\n{header}: {val}'
+            self.logger.info(f"[h2tinker.create_request_frames] req_str after headers: {req_str}")
 
         # noinspection PyTypeChecker
         return header_table.parse_txt_hdrs(

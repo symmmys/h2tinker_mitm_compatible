@@ -6,9 +6,11 @@ from mitmproxy import command
 from mitmproxy import flow
 from mitmproxy import http
 from mitmproxy.log import ALERT
+from mitmproxy.script import concurrent
 import typing
 import abc
 import collections
+import asyncio
 
 class RaceReplay:
     #WIP, but the goal here is to take a sequence of compatible flows and string them all together into
@@ -27,10 +29,12 @@ class RaceReplay:
 
             # We gather the final DATA frames here
             final_frames = []
+            flow_index = 0
 
             # Generate 10 valid client stream IDs
             for i in h2.gen_stream_ids(len(flows)):
-                this_flow = flows[i - 1]
+                this_flow = flows[flow_index]
+                flow_index = flow_index + 1
                 if isinstance(this_flow, http.HTTPFlow):
                     # Create request frames for POST /race
                     req = conn.create_request_frames(this_flow.request.method, this_flow.request.path , i, this_flow.request.headers,this_flow.request.content)
