@@ -14,8 +14,8 @@ class H2TLSConnection(H2Connection):
     TLS-secured HTTP/2 connection.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, logger):
+        super().__init__(logger)
         assert_error(bool(ssl.HAS_ALPN), 'TLS ALPN extension not available but it is required for HTTP/2 over TLS')
 
     def setup(self, host: str, port: int = 443):
@@ -33,7 +33,7 @@ class H2TLSConnection(H2Connection):
         addrinfos = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP)
         assert_error(len(addrinfos) > 0, 'No TCP socket info available for host {} and port {}', host, port)
         addrinfo = addrinfos[0]
-        log.debug('Endpoint addrinfo: {}'.format(addrinfo))
+        self.logger.debug('Endpoint addrinfo: {}'.format(addrinfo))
 
         raw_sock = socket.socket(addrinfo[0], addrinfo[1], addrinfo[2])
         raw_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -48,10 +48,10 @@ class H2TLSConnection(H2Connection):
         assert_error('h2' == ssl_sock.selected_alpn_protocol(), 'Server did not agree to use HTTP/2 in ALPN')
 
         self.sock = supersocket.SSLStreamSocket(ssl_sock, basecls=h2.H2Frame)
-        log.debug("Socket connected")
+        self.logger.debug("Socket connected")
 
         self._send_preface()
         self._send_initial_settings()
         self._setup_wait_loop()
         self.is_setup_completed = True
-        log.info("Completed HTTP/2 connection setup")
+        self.logger.info("Completed HTTP/2 connection setup")

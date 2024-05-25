@@ -109,7 +109,9 @@ def is_frame_type(h2_frame: h2.H2Frame,
     :param h2_frame: unknown-type frame
     :param inner_frame_type: specific frame type
     """
-    type_id_matches = h2_frame.type == inner_frame_type.type_id
+    
+    this_frame_type = h2_frame.type
+    type_id_matches = this_frame_type == inner_frame_type.type_id
     class_matches = isinstance(h2_frame.payload, inner_frame_type) or isinstance(h2_frame.payload, NoPayload)
     if type_id_matches != class_matches:
         warn("Frame type check inconsistent: type ID matches: {}, class matches: {}".format(type_id_matches, class_matches))

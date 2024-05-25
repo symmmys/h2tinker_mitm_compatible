@@ -1,12 +1,15 @@
 with import <nixpkgs> { }; 
 let 
-ps = python310Packages; 
+ps = python311Packages; 
 in pkgs.mkShell rec { 
-name = "myenv"; 
-venvDir = "./.venv"; 
+name = "testname"; 
+venvDir = "./.venv";
+ol_scapy = callPackage ./ol_scapy.nix { buildPythonPackage = ps.buildPythonPackage; can = ps.can; cryptography = ps.cryptography; ecdsa = ps.ecdsa; mock = ps.mock; brotli = ps.brotli; pycrypto = ps.pycrypto; ipython = ps.ipython; isPyPy = false; matplotlib = ps.matplotlib; pyx = ps.pyx; graphviz = ps.graphviz;  };
 buildInputs = [
 # A Python interpreter including the 'venv' module is required to bootstrap the environment. 
 ps.python
+ol_scapy
+#ps.scapy
 # This execute some shell code to initialize a venv in $venvDir before
 # dropping into the shell
 ps.venvShellHook

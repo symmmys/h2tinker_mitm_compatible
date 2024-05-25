@@ -1,4 +1,5 @@
 import time
+import sys
 import typing as T
 from abc import ABC
 
@@ -18,11 +19,13 @@ class H2Connection(ABC):
 
     PREFACE = hex_bytes('505249202a20485454502f322e300d0a0d0a534d0d0a0d0a')
 
-    def __init__(self, ):
+    def __init__( self, logger ):
         self.host = None
         self.port = None
         self.sock = None
         self.is_setup_completed = False
+        self.logger = logger
+        sys.stdout = self.logger
 
     def _check_setup_completed(self):
         assert_error(self.is_setup_completed, 'Connection setup has not been completed, call setup(...) '
@@ -33,8 +36,8 @@ class H2Connection(ABC):
                                                   '{}:{}', self.host, self.port)
 
     def create_request_frames(self, method: str, path: str, stream_id: int,
-                              headers: T.Dict[str, str] = None,
-                              body: T.Optional[str] = None) -> h2.H2Seq:
+                              headers: tuple[tuple[str, str] , ...] = None,
+                              body: T.Optional[bytes] = None) -> h2.H2Seq:
         """
         Create HTTP/2 frames representing a HTTP request.
         :param method: HTTP request method, e.g. GET
@@ -49,9 +52,11 @@ class H2Connection(ABC):
                    ':path {}\n'
                    ':scheme http\n'
                    ':authority {}:{}\n').format(method, path, self.host, self.port)
+        self.logger.info("req_str before headers:",req_str)
 
         if headers is not None:
-            req_str += '\n'.join(map(lambda e: '{}: {}'.format(e[0], e[1]), headers.items()))
+            req_str += '\n'.join(map(lambda e: '{}: {}'.format(e[0], e[1]), headers))
+        self.logger.info("[h2tinker.create_request_frames] req_str after headers:",req_str)
 
         # noinspection PyTypeChecker
         return header_table.parse_txt_hdrs(
@@ -64,8 +69,8 @@ class H2Connection(ABC):
                                         dependency_stream_id: int = 0,
                                         dependency_weight: int = 0,
                                         dependency_is_exclusive: bool = False,
-                                        headers: T.Dict[str, str] = None,
-                                        body: T.Optional[str] = None) -> h2.H2Seq:
+                                        headers: tuple[tuple[bytes, bytes], ...] = None,
+                                        body: T.Optional[bytes] = None) -> h2.H2Seq:
         """
         Create HTTP/2 frames representing a HTTP request that depends on another request (stream).
         :param method: HTTP request method, e.g. GET
@@ -102,12 +107,12 @@ class H2Connection(ABC):
         :param print_frames: whether to print received frames
         """
         self._check_setup_completed()
-        log.info("Infinite read loop starting...")
+        self.logger.info("Infinite read loop starting...")
         while True:
             frames = self._recv_frames()
             if print_frames:
                 for f in frames:
-                    log.info("Read frame:")
+                    self.logger.info("Read frame:")
                     f.show()
 
     def send_frames(self, *frames: h2.H2Frame):
@@ -132,18 +137,24 @@ class H2Connection(ABC):
         while not server_has_acked_settings or not we_have_acked_settings:
             frames = self._recv_frames()
             for f in frames:
-                if is_frame_type(f, h2.H2SettingsFrame):
-                    if has_ack_set(f):
-                        log.info("Server acked our settings")
-                        server_has_acked_settings = True
-                    else:
-                        log.info("Got server settings, acking")
-                        self._ack_settings()
-                        we_have_acked_settings = True
+                self.logger.info(f"[h2tinker/h2_connection.py info] _setup_wait_loop type(f): {type(f)}")
+                try:
+                    if is_frame_type(f, h2.H2SettingsFrame):
+                        self.logger.info(f"[h2tinker/h2_connection.py info] _setup_wait_loop: is H2SettingsFrame, true")
+                        if has_ack_set(f):
+                            self.logger.info("Server acked our settings")
+                            server_has_acked_settings = True
+                        else:
+                            self.logger.info("Got server settings, acking")
+                            self._ack_settings()
+                            we_have_acked_settings = True
+                except ValueError:
+                        self.logger.info(f"[h2tinker/h2_connection.py info] ValueError while attempting to check frame type - possibly raw packet")
+
 
     def _ack_settings(self):
         self._send_frames(create_settings_frame(is_ack=True))
-        log.info("Acked server settings")
+        self.logger.info("Acked server settings")
 
     def _send_initial_settings(self):
         settings = [
@@ -152,7 +163,7 @@ class H2Connection(ABC):
             h2.H2Setting(id=h2.H2Setting.SETTINGS_MAX_CONCURRENT_STREAMS, value=1000)
         ]
         self._send_frames(create_settings_frame(settings))
-        log.info("Sent settings")
+        self.logger.info("Sent settings")
 
     def _send_frames(self, *frames: h2.H2Frame):
         b = bytes()
