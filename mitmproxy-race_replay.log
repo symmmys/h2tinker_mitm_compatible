@@ -1,0 +1,73 @@
+INFO:mitmproxy.proxy.mode_servers:HTTP(S) proxy listening at *:8080.
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect incoming.telemetry.mozilla.org:443 (34.120.208.123:443)
+INFO:mitmproxy.proxy.server:server connect spocs.getpocket.com:443 (34.117.188.166:443)
+INFO:mitmproxy.proxy.server:server connect contile.services.mozilla.com:443 (34.117.188.166:443)
+INFO:mitmproxy.proxy.server:server connect firefox-api-proxy.cdn.mozilla.net:443 ([2600:1901:0:74e4::]:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect 0a2400b103712f6280990d50008f00ff.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server disconnect 0a2400b103712f6280990d50008f00ff.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect firefox.settings.services.mozilla.com:443 (34.149.100.209:443)
+INFO:mitmproxy.proxy.server:server connect 0a2400b103712f6280990d50008f00ff.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server disconnect 0a2400b103712f6280990d50008f00ff.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect ps.piwik.pro:443 ([2603:1020:c01:4::40]:443)
+INFO:mitmproxy.proxy.server:server connect portswigger.net:443 (34.249.63.188:443)
+INFO:mitmproxy.proxy.server:server disconnect ps.piwik.pro:443 ([2603:1020:c01:4::40]:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect play.google.com:443 ([2607:f8b0:4009:819::200e]:443)
+INFO:mitmproxy.proxy.server:server connect play.google.com:443 ([2607:f8b0:4009:819::200e]:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server disconnect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:client disconnect
+INFO:mitmproxy.proxy.server:server disconnect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (79.125.84.16:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server disconnect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (79.125.84.16:443)
+INFO:mitmproxy.proxy.server:server disconnect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:client disconnect
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (79.125.84.16:443)
+INFO:mitmproxy.proxy.server:client connect
+INFO:mitmproxy.proxy.server:server connect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (34.246.129.62:443)
+INFO:mitmproxy.proxy.server:server disconnect 0aa2007f036874e88964f4c900d100f6.web-security-academy.net:443 (79.125.84.16:443)
+INFO:mitmproxy.proxy.server:server disconnect portswigger.net:443 (34.249.63.188:443)
+DEBUG:mitmproxy.proxy.server:Send HTTP/2 keep-alive PING to 34.120.208.123:443
+DEBUG:mitmproxy.proxy.server:Send HTTP/2 keep-alive PING to 34.117.188.166:443
+DEBUG:mitmproxy.proxy.server:Send HTTP/2 keep-alive PING to 34.117.188.166:443
+DEBUG:mitmproxy.proxy.server:Send HTTP/2 keep-alive PING to [2600:1901:0:74e4::]:443
+DEBUG:mitmproxy.proxy.server:Send HTTP/2 keep-alive PING to 34.149.100.209:443
+INFO:root:[RaceReplay] Connecting to: 0aa2007f036874e88964f4c900d100f6.web-security-academy.net
+DEBUG:__mitmproxy_script__.race_replay:Endpoint addrinfo: (<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('79.125.84.16', 443))
+DEBUG:__mitmproxy_script__.race_replay:Socket connected
+INFO:__mitmproxy_script__.race_replay:[h2tinker/h2_connection._send_frames] sending frame:
+INFO:__mitmproxy_script__.race_replay:###[ HTTP/2 Frame ]### 
+  len       = None
+  type      = SetFrm
+  flags     = set()
+  reserved  = 0
+  stream_id = 0
+###[ HTTP/2 Settings Frame ]### 
+     \settings  \
+      |###[ HTTP/2 Setting ]### 
+      |  id        = Enable push
+      |  value     = 0
+      |###[ HTTP/2 Setting ]### 
+      |  id        = Initial window size
+      |  value     = 2147483647
+      |###[ HTTP/2 Setting ]### 
+      |  id        = Max concurrent streams
+      |  value     = 1000
+
+INFO:__mitmproxy_script__.race_replay:Sent settings
+ERROR:mitmproxy.addons.proxyserver:[Errno 98] HTTP(S) proxy failed to listen on *:8080 with [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use
+Try specifying a different port by using `--mode regular@8082`.

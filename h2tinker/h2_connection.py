@@ -120,7 +120,7 @@ class H2Connection(ABC):
         req_frameseq.frames = dep_req_frames
         return req_frameseq
 
-    def infinite_read_loop(self, print_frames: bool = True):
+    def infinite_read_loop(self, print_frames: bool = True, num_streams: int = 100):
         """
         Start an infinite loop that reads and possibly prints received frames.
         :param print_frames: whether to print received frames
@@ -128,14 +128,20 @@ class H2Connection(ABC):
         self._check_setup_completed()
         self.logger.info("[h2tinker/h2_connection.infinite_read_loop] 10 second timed receive loop starting...")
         timeout = time.time() + 10
+        endstream_flags_detected = 0
         while True:
             if time.time() > timeout:
-                break
+                return
             frames = self._recv_frames()
-            if print_frames:
-                for f in frames:
+            for f in frames:
+                if 'ES' in frame.flags:
+                    endstream_flags_detected = endstream_flags_detected + 1
+                if print_frames:
                     self.logger.info("Read frame:")
                     f.show()
+            if endstream_flags_detected >= num_streams:
+                return
+
 
     def send_frames(self, *frames: h2.H2Frame):
         """
